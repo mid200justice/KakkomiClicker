@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Custom Clicker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div class="stats-panel">
+            <h1>スコア: <span id="score">0</span></h1>
+            <p>毎秒: <span id="cps">0</span></p>
+        </div>
+
+        <div class="main-panel">
+            <!-- 画像をassets内のものに変更可能 -->
+            <img src="assets/cookie.png" id="cookie-btn" alt="Click Me!">
+        </div>
+
+        <div class="shop-panel">
+            <h2>ショップ</h2>
+            <div id="shop-list">
+                <!-- JavaScriptでここにボタンが生成されます -->
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
