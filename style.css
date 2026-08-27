@@ -1,80 +1,44 @@
-/* 全体の背景（PCで見た時の外側の色） */
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #333; /* 外側は暗いグレー */
-    display: flex;
-    justify-content: center; /* 横方向の中央寄せ */
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    color: #333;
+/* --- 画像全体の共通設定 --- */
+img {
+    /* すべての画像を最大500x500の正方形に制限 */
+    width: 500px;
+    height: 500px;
+    
+    /* 重要：画像が4:3などの場合でも、引き伸ばさずに枠内に収める */
+    object-fit: contain; 
+    
+    /* 背景を透明にする（必要に応じて） */
+    background-color: transparent;
 }
 
-/* ゲーム画面本体（スマホサイズに固定） */
+/* --- メインパネル内の画像（クッキーなど） --- */
+.main-panel img {
+    /* スマホ画面からはみ出さないように調整 */
+    max-width: 100%; 
+    height: auto;   /* 横幅に合わせて高さも自動（正方形を維持） */
+    aspect-ratio: 1 / 1; /* 縦横比を1:1に強制 */
+    
+    /* クリックしやすくするための余白 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* --- もしショップにも画像を入れるなら --- */
+.shop-item img {
+    /* ショップアイコンは500pxだと大きすぎるので、表示だけ小さくする */
+    /* ただし、元の制限サイズは維持したいなら以下のように */
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+}
+
+/* --- ゲームコンテナの微調整 --- */
 #game-container {
     width: 100%;
-    max-width: 480px; /* スマホの最大幅 */
-    height: 100vh;    /* 画面いっぱいの高さ */
-    background-color: #fff; /* ゲーム画面は白 */
+    max-width: 500px; /* 画像サイズに合わせてコンテナも最大500pxに */
+    height: 100vh;
+    background-color: #fff;
     display: flex;
     flex-direction: column;
-    position: relative;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5); /* 影をつけて浮かせる */
-    overflow: hidden;
-}
-
-/* スコア表示エリア */
-.stats-panel {
-    padding: 20px;
-    text-align: center;
-    background: #f8f8f8;
-    border-bottom: 2px solid #eee;
-}
-
-/* メインのクリックエリア */
-.main-panel {
-    flex: 1; /* 余ったスペースを全部使う */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-#cookie-btn {
-    width: 80%;
-    max-width: 250px;
-    cursor: pointer;
-    transition: transform 0.1s;
-    user-select: none;
-}
-
-#cookie-btn:active {
-    transform: scale(0.95);
-}
-
-/* ショップエリア（下半分に固定してスクロール可能に） */
-.shop-panel {
-    height: 40%;
-    background: #fafafa;
-    border-top: 2px solid #ddd;
-    overflow-y: auto; /* はみ出たらスクロール */
-    padding: 10px;
-}
-
-.shop-item {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 10px;
-    margin-bottom: 8px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.shop-item:disabled {
-    background: #eee;
-    color: #888;
-    cursor: not-allowed;
+    margin: 0 auto;
 }
