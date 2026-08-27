@@ -85,6 +85,27 @@ h2 { margin: 10px 0; font-size: 1.2rem; text-align: center; }
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+/* ショップアイテム内の画像 */
+.shop-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-right: 15px;
+    background: #eee;
+    border-radius: 5px;
+}
+
+/* アイテム情報の左側（画像と名前）をまとめる */
+.shop-item-left {
+    display: flex;
+    align-items: center;
+}
+
+/* まだ解放されていないアイテムは表示しない、または暗くする */
+.shop-item.locked {
+    display: none; /* 完全に隠す場合 */
+}
+
 .shop-item:disabled {
     background: #eee;
     color: #999;
