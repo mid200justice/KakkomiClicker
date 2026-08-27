@@ -17,7 +17,13 @@
             <!-- 画像をassets内のものに変更可能 -->
             <img src="assets/cookie.png" id="cookie-btn" alt="Click Me!">
         </div>
-
+        
+        <div class="save-menu">    
+            <button onclick="exportSave()">セーブ書き出し</button>
+            <button onclick="importSave()">セーブ読み込み</button>
+        </div>
+        <!-- ファイル選択用の隠し要素 -->
+        <input type="file" id="save-upload" style="display:none" onchange="handleFileSelect(event)">
         <div class="shop-panel">
             <h2>ショップ</h2>
             <div id="shop-list">
