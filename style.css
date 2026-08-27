@@ -1,44 +1,92 @@
-/* --- 画像全体の共通設定 --- */
-img {
-    /* すべての画像を最大500x500の正方形に制限 */
-    width: 500px;
-    height: 500px;
-    
-    /* 重要：画像が4:3などの場合でも、引き伸ばさずに枠内に収める */
-    object-fit: contain; 
-    
-    /* 背景を透明にする（必要に応じて） */
-    background-color: transparent;
+/* --- ベース設定 --- */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #222; /* 背景は暗いグレー */
+    display: flex;
+    justify-content: center;
+    font-family: sans-serif;
 }
 
-/* --- メインパネル内の画像（クッキーなど） --- */
-.main-panel img {
-    /* スマホ画面からはみ出さないように調整 */
-    max-width: 100%; 
-    height: auto;   /* 横幅に合わせて高さも自動（正方形を維持） */
-    aspect-ratio: 1 / 1; /* 縦横比を1:1に強制 */
-    
-    /* クリックしやすくするための余白 */
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-/* --- もしショップにも画像を入れるなら --- */
-.shop-item img {
-    /* ショップアイコンは500pxだと大きすぎるので、表示だけ小さくする */
-    /* ただし、元の制限サイズは維持したいなら以下のように */
-    width: 60px;
-    height: 60px;
-    margin-right: 10px;
-}
-
-/* --- ゲームコンテナの微調整 --- */
+/* --- スマホ風コンテナ（ここが一個前の仕様の肝） --- */
 #game-container {
-    width: 100%;
-    max-width: 500px; /* 画像サイズに合わせてコンテナも最大500pxに */
-    height: 100vh;
+    width: 100vw;
+    max-width: 480px; /* スマホの幅 */
+    height: 100vh;    /* 画面の高さ100% */
     background-color: #fff;
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+}
+
+/* スコア表示エリア */
+.stats-panel {
+    padding: 20px;
+    text-align: center;
+    background: #fdfdfd;
+    border-bottom: 2px solid #eee;
+    z-index: 10;
+}
+
+/* --- メインパネル（画像が表示される場所） --- */
+.main-panel {
+    flex: 1; /* 余ったスペースを全部使う */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+/* --- 画像の500x500制限設定 --- */
+#cookie-btn {
+    /* 最大でも500x500。ただしスマホ幅(100%)からはみ出さない */
+    width: 100%;
+    max-width: 500px; 
+    aspect-ratio: 1 / 1; /* 縦横比を1:1に固定（正方形） */
+    
+    object-fit: contain; /* 画像を歪ませずに枠内に収める */
+    
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent; /* スマホでタップした時の青い枠を消す */
+}
+
+#cookie-btn:active {
+    transform: scale(0.95); /* クリック時のアニメーション */
+}
+
+/* --- ショップパネル（下半分にスクロール表示） --- */
+.shop-panel {
+    height: 40%; /* 下40%をショップにする */
+    background: #f9f9f9;
+    border-top: 1px solid #ddd;
+    overflow-y: auto; /* アイテムが増えたらスクロール */
+    padding: 10px;
+}
+
+h2 { margin: 10px 0; font-size: 1.2rem; text-align: center; }
+
+/* ショップのアイテムボタン */
+.shop-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.shop-item:disabled {
+    background: #eee;
+    color: #999;
+    filter: grayscale(1);
 }
