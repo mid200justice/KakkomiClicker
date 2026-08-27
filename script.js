@@ -9,36 +9,79 @@ const scoreDisplay = document.getElementById('score');
 const cpsDisplay = document.getElementById('cps');
 const shopList = document.getElementById('shop-list');
 
-// --- 1. CSVを読み込む関数 ---
+// --- 1. CSV読み込み部分の修正 ---
 async function loadGameData() {
     try {
-        const response = await fetch('assets/data.csv'); // CSVファイルの取得
+        const response = await fetch('assets/data.csv');
         const csvText = await response.text();
-        
-        // CSVを1行ずつ分割し、オブジェクトの配列に変換
-        const lines = csvText.split('\n');
-        const headers = lines[0].split(',');
+        const lines = csvText.trim().split('\n');
+        items = [];
 
         for (let i = 1; i < lines.length; i++) {
-            if (!lines[i]) continue;
             const values = lines[i].split(',');
-            const item = {
-                id: values[0],
-                name: values[1],
-                cost: parseInt(values[2]),
-                power: parseInt(values[3]),
-                description: values[4],
-                count: 0 // 所持数は最初は0
-            };
-            items.push(item);
-        }
+            if (values.length < 6) continue;
 
-        // データ読み込み完了後にショップを表示
-        initShop();
+            items.push({
+                id: values[0].trim(),
+                name: values[1].trim(),
+                cost: parseInt(values[2]),
+                initialCost: parseInt(values[2]), // セーブ復元用に初期値を保持
+                power: parseInt(values[3]),
+                description: values[4].trim(),
+                image: values[5].trim(),         // 画像パス
+                unlockScore: parseInt(values[6]), // 解放条件スコア
+                count: 0,
+                unlocked: false                  // 解放フラグ
+            });
+        }
+        updateShop(); // 最初の一回目のショップ描画
     } catch (error) {
-        console.error("CSVの読み込みに失敗しました:", error);
+        console.error("CSV読み込みエラー:", error);
     }
 }
+
+// --- 2. ショップの動的生成と更新 ---
+function updateShop() {
+    shopList.innerHTML = '';
+
+    items.forEach((item, index) => {
+        // 解放条件をチェック（一度解放されたらそのまま）
+        if (!item.unlocked && gameState.score >= item.unlockScore) {
+            item.unlocked = true;
+        }
+
+        if (item.unlocked) {
+            const btn = document.createElement('button');
+            btn.className = 'shop-item';
+            btn.disabled = gameState.score < item.cost;
+            
+            btn.innerHTML = `
+                <div class="shop-item-left">
+                    <img src="${item.image}" class="shop-img" alt="${item.name}">
+                    <div>
+                        <strong>${item.name} (${item.count})</strong><br>
+                        <small>${item.description}</small>
+                    </div>
+                </div>
+                <div class="shop-item-right">
+                    <span>${Math.floor(item.cost)} 枚</span>
+                </div>
+            `;
+            
+            btn.onclick = () => buyItem(index);
+            shopList.appendChild(btn);
+        }
+    });
+}
+
+// --- 3. メインループ内での更新 ---
+// 100msごとのループの中で updateShop を呼ぶと重くなるので、
+// スコアが変わった時や1秒に1回など、適切なタイミングで呼び出すのがコツです。
+setInterval(() => {
+    gameState.score += gameState.cps / 10;
+    updateDisplay();
+    updateShop(); // 解放条件や「買えるかどうか」を常にチェック
+}, 100);
 
 // --- 2. ショップの表示 ---
 function initShop() {
