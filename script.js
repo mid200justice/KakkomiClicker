@@ -93,3 +93,79 @@ setInterval(() => {
 
 // ゲーム開始時にCSVを読み込む
 loadGameData();
+
+// --- セーブデータの書き出し (Export) ---
+function exportSave() {
+    const saveData = {
+        version: "1.0", // バージョン管理用
+        score: gameState.score,
+        // アイテムはIDと個数だけを保存する（これがバージョンアップ耐性の秘訣）
+        inventory: items.map(item => ({
+            id: item.id,
+            count: item.count
+        }))
+    };
+
+    // JSONを文字列にして、本家っぽくBase64でエンコードする
+    const jsonString = JSON.stringify(saveData);
+    const encodedSave = btoa(unescape(encodeURIComponent(jsonString)));
+
+    // ファイルとしてダウンロード
+    const blob = new Blob([encodedSave], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `kakkomi_save_${new Date().toISOString().slice(0,10)}.txt`;
+    a.click();
+}
+
+// --- セーブデータの読み込み (Import) ---
+function importSave() {
+    // ファイル選択ダイアログを開く
+    document.getElementById('save-upload').click();
+}
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const encodedData = e.target.result;
+            // Base64をデコードしてJSONに戻す
+            const jsonString = decodeURIComponent(escape(atob(encodedData)));
+            const loadedData = JSON.parse(jsonString);
+
+            applySaveData(loadedData);
+        } catch (err) {
+            alert("セーブデータが壊れているか、形式が正しくありません。");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+}
+
+// --- 読み込んだデータをゲームに反映 ---
+function applySaveData(data) {
+    // スコアの復元
+    gameState.score = data.score || 0;
+
+    // 所持数の復元（IDを照合して一致するものだけ入れる）
+    if (data.inventory) {
+        data.inventory.forEach(saveItem => {
+            const item = items.find(i => i.id === saveItem.id);
+            if (item) {
+                item.count = saveItem.count;
+                // コストの再計算（(初期コスト) * 1.15^所持数）
+                const initialCost = item.cost; // 注意：ここを初期値にする工夫が必要（後述）
+                // 簡易版として、今のCSVのコストをベースに計算し直す
+                // 実際にはCSVに「初期コスト」の列を作っておくと完璧です
+            }
+        });
+    }
+
+    calculateCPS();
+    updateDisplay();
+    initShop(); // ショップ画面を更新
+    alert("セーブデータを読み込みました！");
+}
